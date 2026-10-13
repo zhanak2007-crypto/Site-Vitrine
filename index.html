@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aminata Restaurant — Restaurant de cuisine ivoirienne</title>
+  <meta name="description" content="Aminata Restaurant, restaurant de cuisine ivoirienne revisitée à Abidjan. Découvrez notre carte et réservez votre table." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== VARIABLES ===== */
+    :root {
+      --cream: #fbf5ea;
+      --cream-2: #f3e9d6;
+      --brown: #2b1a12;
+      --brown-2: #46291c;
+      --terra: #c8553d;
+      --gold: #d9a441;
+      --green: #2f5d50;
+      --text: #3a2a22;
+      --muted: #7a675b;
+      --radius: 20px;
+      --shadow: 0 18px 45px rgba(43, 26, 18, 0.15);
+      --font-body: "Poppins", system-ui, sans-serif;
+      --font-title: "Cormorant Garamond", Georgia, serif;
+    }
+
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      font-family: var(--font-body);
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+    .container { width: min(1120px, 100% - 2.5rem); margin-inline: auto; }
+
+    /* ===== TYPO ===== */
+    h1, h2, h3 { font-family: var(--font-title); line-height: 1.1; font-weight: 700; color: var(--brown); }
+    h1 { font-size: clamp(3rem, 9vw, 6rem); color: var(--cream); }
+    h2 { font-size: clamp(2.2rem, 5vw, 3.4rem); }
+    h3 { font-size: 1.5rem; }
+    .eyebrow {
+      display: inline-block; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase;
+      font-weight: 600; color: var(--terra); margin-bottom: 0.8rem;
+    }
+    .divider { width: 60px; height: 3px; background: var(--gold); border-radius: 3px; margin: 1.2rem 0 1.6rem; }
+    .center { text-align: center; }
+    .center .divider { margin-inline: auto; }
+
+    /* ===== BOUTONS ===== */
+    .btn {
+      display: inline-block; padding: 0.95rem 2rem; border-radius: 999px; font-weight: 500; font-size: 0.95rem;
+      background: var(--terra); color: #fff; transition: transform 0.25s, background 0.25s, box-shadow 0.25s;
+      box-shadow: 0 10px 25px rgba(200, 85, 61, 0.35);
+    }
+    .btn:hover { transform: translateY(-3px); background: #b3452f; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--cream); color: var(--cream); box-shadow: none; }
+    .btn-outline:hover { background: var(--cream); color: var(--brown); }
+    .btn-small { padding: 0.5rem 1.3rem; font-size: 0.85rem; }
+    .btn-full { width: 100%; border: 0; }
+
+    /* ===== HEADER ===== */
+    .header {
+      position: fixed; inset: 0 0 auto 0; z-index: 100; padding: 1.2rem 0;
+      transition: background 0.3s, padding 0.3s, box-shadow 0.3s;
+    }
+    .header.scrolled { background: rgba(43, 26, 18, 0.95); padding: 0.7rem 0; box-shadow: 0 5px 25px rgba(0,0,0,0.25); }
+    .nav { display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: var(--font-title); font-size: 1.9rem; font-weight: 700; color: var(--cream); }
+    .logo span { color: var(--gold); }
+    .menu { display: flex; align-items: center; gap: 2rem; font-size: 0.92rem; color: var(--cream); }
+    .menu a:not(.btn) { opacity: 0.85; transition: opacity 0.2s, color 0.2s; }
+    .menu a:not(.btn):hover { opacity: 1; color: var(--gold); }
+    .burger { display: none; width: 30px; height: 22px; position: relative; z-index: 120; }
+    .burger span { position: absolute; left: 0; width: 100%; height: 2px; background: var(--cream); border-radius: 2px; transition: 0.3s; }
+    .burger span:nth-child(1) { top: 0; }
+    .burger span:nth-child(2) { top: 10px; }
+    .burger span:nth-child(3) { top: 20px; }
+    .burger.open span:nth-child(1) { top: 10px; transform: rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { top: 10px; transform: rotate(-45deg); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative; min-height: 100vh; display: grid; place-items: center; text-align: center;
+      padding: 7rem 0 5rem; color: var(--cream); overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(217, 164, 65, 0.25), transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(200, 85, 61, 0.35), transparent 50%),
+        linear-gradient(160deg, #2b1a12, #46291c 60%, #2f5d50 140%);
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; opacity: 0.07;
+      background-image: repeating-linear-gradient(45deg, #fff 0 2px, transparent 2px 22px);
+    }
+    .hero-inner { position: relative; z-index: 1; }
+    .hero .eyebrow { color: var(--gold); }
+    .hero h1 em { color: var(--gold); font-style: italic; }
+    .hero p { max-width: 560px; margin: 1.5rem auto 2.4rem; opacity: 0.85; font-weight: 300; font-size: 1.1rem; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    .scroll-hint { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); font-size: 1.4rem; animation: bounce 2s infinite; opacity: 0.7; }
+    @keyframes bounce { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 10px); } }
+
+    /* ===== SECTIONS ===== */
+    .section { padding: 7rem 0; }
+    .section-dark { background: var(--brown); color: var(--cream); }
+    .section-dark h2, .section-dark h3 { color: var(--cream); }
+
+    /* ===== À PROPOS ===== */
+    .about { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .about-visual { position: relative; }
+    .about-art {
+      aspect-ratio: 4/5; border-radius: 200px 200px var(--radius) var(--radius); display: grid; place-items: center;
+      font-size: 9rem; box-shadow: var(--shadow);
+      background: linear-gradient(160deg, var(--gold), var(--terra));
+    }
+    .about-tag {
+      position: absolute; bottom: 1.5rem; left: -1.2rem; background: var(--cream); border-radius: 16px;
+      padding: 1rem 1.4rem; box-shadow: var(--shadow); font-size: 0.85rem; color: var(--muted);
+    }
+    .about-tag strong { display: block; font-family: var(--font-title); font-size: 1.8rem; color: var(--terra); line-height: 1; }
+    .about-text p { color: var(--muted); margin-bottom: 1rem; }
+    .values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
+    .value { background: var(--cream-2); border-radius: 14px; padding: 1.1rem; text-align: center; font-size: 0.85rem; }
+    .value span { display: block; font-size: 1.7rem; }
+
+    /* ===== MENU ===== */
+    .tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.7rem; margin: 2.5rem 0 3rem; }
+    .tab {
+      padding: 0.7rem 1.6rem; border-radius: 999px; font-weight: 500; font-size: 0.92rem;
+      border: 1.5px solid rgba(251, 245, 234, 0.25); color: var(--cream); transition: 0.25s;
+    }
+    .tab:hover { border-color: var(--gold); }
+    .tab.active { background: var(--gold); border-color: var(--gold); color: var(--brown); }
+    .panel { display: none; grid-template-columns: repeat(2, 1fr); gap: 1.4rem 3rem; animation: fade 0.5s ease; }
+    .panel.active { display: grid; }
+    @keyframes fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .dish { padding-bottom: 1.2rem; border-bottom: 1px dashed rgba(251, 245, 234, 0.2); }
+    .dish-head { display: flex; align-items: baseline; gap: 0.6rem; }
+    .dish-head h3 { font-size: 1.45rem; }
+    .dish-head .line { flex: 1; border-bottom: 1px dotted rgba(251, 245, 234, 0.35); transform: translateY(-4px); }
+    .price { color: var(--gold); font-weight: 600; white-space: nowrap; }
+    .dish p { font-size: 0.88rem; opacity: 0.7; font-weight: 300; margin-top: 0.2rem; }
+
+    /* ===== GALERIE ===== */
+    .gallery { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 180px; gap: 1rem; margin-top: 3rem; }
+    .tile {
+      border-radius: var(--radius); display: grid; place-items: center; font-size: 3.5rem;
+      transition: transform 0.4s, box-shadow 0.4s; cursor: pointer;
+    }
+    .tile:hover { transform: scale(1.04) rotate(-1deg); box-shadow: var(--shadow); }
+    .tile-1 { grid-column: span 2; grid-row: span 2; font-size: 6rem; background: linear-gradient(135deg, #c8553d, #d9a441); }
+    .tile-2 { background: linear-gradient(135deg, #2f5d50, #4d8a77); }
+    .tile-3 { background: linear-gradient(135deg, #d9a441, #f0cf8a); }
+    .tile-4 { grid-row: span 2; background: linear-gradient(135deg, #46291c, #8a5436); }
+    .tile-5 { background: linear-gradient(135deg, #b3452f, #e08a6f); }
+    .tile-6 { grid-column: span 2; background: linear-gradient(135deg, #2f5d50, #d9a441); }
+
+    /* ===== AVIS ===== */
+    .reviews { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .review { background: #fff; border-radius: var(--radius); padding: 2rem; box-shadow: 0 8px 25px rgba(43, 26, 18, 0.08); transition: transform 0.3s; }
+    .review:hover { transform: translateY(-6px); }
+    .stars { color: var(--gold); letter-spacing: 3px; margin-bottom: 0.8rem; }
+    .review p { color: var(--muted); font-style: italic; margin-bottom: 1.2rem; }
+    .review strong { font-size: 0.9rem; color: var(--brown); }
+
+    /* ===== RÉSERVATION ===== */
+    .reserve { display: grid; grid-template-columns: 1fr 1.1fr; gap: 5rem; align-items: start; }
+    .hours { margin-top: 2rem; display: grid; gap: 0.8rem; }
+    .hours li { display: flex; justify-content: space-between; padding-bottom: 0.7rem; border-bottom: 1px dashed rgba(251, 245, 234, 0.25); }
+    .hours span:last-child { color: var(--gold); }
+    .contact-lines { margin-top: 1.8rem; font-size: 0.95rem; opacity: 0.85; display: grid; gap: 0.3rem; }
+    .form { background: var(--cream); color: var(--text); border-radius: var(--radius); padding: 2.4rem; display: grid; gap: 1.1rem; box-shadow: var(--shadow); }
+    .form h3 { color: var(--brown); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field label { display: block; font-size: 0.8rem; margin-bottom: 0.3rem; color: var(--muted); font-weight: 500; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 0.85rem 1rem; border-radius: 12px; border: 1.5px solid #e4d6bd;
+      background: #fff; font: inherit; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--terra); box-shadow: 0 0 0 4px rgba(200, 85, 61, 0.15); }
+    .field.error input, .field.error select { border-color: #d64545; }
+    .status { text-align: center; min-height: 1.5em; font-size: 0.9rem; font-weight: 500; }
+    .status.ok { color: var(--green); }
+    .status.ko { color: #d64545; }
+
+    /* ===== FOOTER ===== */
+    .footer { background: #1d110b; color: rgba(251, 245, 234, 0.7); padding: 2.5rem 0; font-size: 0.88rem; }
+    .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+    .socials { display: flex; gap: 1.4rem; }
+    .socials a:hover { color: var(--gold); }
+
+    /* ===== APPARITION ===== */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .about, .reserve { grid-template-columns: 1fr; gap: 3.5rem; }
+      .panel { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; }
+      .section { padding: 5rem 0; }
+      .about-tag { left: 0.5rem; }
+    }
+    @media (max-width: 768px) {
+      .burger { display: block; }
+      .menu {
+        position: fixed; inset: 0; background: rgba(29, 17, 11, 0.98); flex-direction: column;
+        justify-content: center; gap: 2rem; font-size: 1.3rem;
+        transform: translateX(100%); transition: transform 0.4s ease;
+      }
+      .menu.open { transform: translateX(0); }
+      .row { grid-template-columns: 1fr; }
+      .values { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header" id="header">
+    <div class="container nav">
+      <a href="#accueil" class="logo">Aminata Restaurant<span>.</span></a>
+      <nav class="menu" id="menu">
+        <a href="#accueil">Accueil</a>
+        <a href="#apropos">Notre histoire</a>
+        <a href="#carte">La carte</a>
+        <a href="#galerie">Galerie</a>
+        <a href="#avis">Avis</a>
+        <a href="#reservation" class="btn btn-small">Réserver</a>
+      </nav>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="accueil">
+      <div class="container hero-inner">
+        <p class="eyebrow">Cuisine ivoirienne revisitée</p>
+        <h1>Le goût du pays,<br /><em>sublimé</em></h1>
+        <p>Des recettes de nos grands-mères, préparées avec des produits frais et locaux, dans un cadre chaleureux au cœur d'Abidjan.</p>
+        <div class="hero-cta">
+          <a href="#reservation" class="btn">Réserver une table</a>
+          <a href="#carte" class="btn btn-outline">Découvrir la carte</a>
+        </div>
+      </div>
+      <div class="scroll-hint">↓</div>
+    </section>
+
+    <!-- ===== À PROPOS ===== -->
+    <section class="section" id="apropos">
+      <div class="container about">
+        <div class="about-visual reveal">
+          <div class="about-art">🌳</div>
+          <div class="about-tag"><strong>Plus de 17 ans</strong>de tradition culinaire</div>
+        </div>
+        <div class="about-text reveal">
+          <span class="eyebrow">Notre histoire</span>
+          <h2>Une Maman avec des mains en or</h2>
+          <div class="divider"></div>
+          <p>Aminata Restaurant, notre restaurant est un lieu de rencontre. Depuis Plus de 17 ans, nous sublimons les saveurs de la Côte d'Ivoire avec générosité et finesse.</p>
+          <p>Chaque plat raconte une histoire : chaque expérience qu'elle a aquis dans ça vie, sont talent cuisinaire inné et de recettes transmises de génération en génération.</p>
+          <div class="values">
+            <div class="value"><span>🌿</span>Produits locaux</div>
+            <div class="value"><span>🔥</span>Cuisson maison</div>
+            <div class="value"><span>❤️</span>Accueil chaleureux</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== LA CARTE ===== -->
+    <section class="section section-dark" id="carte">
+      <div class="container center">
+        <span class="eyebrow">La carte</span>
+        <h2>Nos spécialités</h2>
+        <div class="divider"></div>
+
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="entrees" role="tab">Entrées</button>
+          <button class="tab" data-tab="plats" role="tab">Plats</button>
+          <button class="tab" data-tab="desserts" role="tab">Desserts</button>
+          <button class="tab" data-tab="boissons" role="tab">Boissons</button>
+        </div>
+
+        <div class="panel active" id="entrees" style="text-align:left">
+          <div class="dish"><div class="dish-head"><h3>Alloco épicé</h3><span class="line"></span><span class="price">2 500 F</span></div><p>Bananes plantain dorées, sauce pimentée maison.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Salade de crevettes</h3><span class="line"></span><span class="price">4 000 F</span></div><p>Crevettes grillées, avocat, mangue et citron vert.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Soupe de poisson</h3><span class="line"></span><span class="price">3 500 F</span></div><p>Bouillon parfumé aux herbes et gingembre.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Beignets de crabe</h3><span class="line"></span><span class="price">3 800 F</span></div><p>Croustillants, accompagnés d'une mayonnaise aux épices.</p></div>
+        </div>
+
+        <div class="panel" id="plats" style="text-align:left">
+          <div class="dish"><div class="dish-head"><h3>Poulet braisé</h3><span class="line"></span><span class="price">6 500 F</span></div><p>Mariné 24 h, braisé au feu de bois, attiéké et oignons.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Kedjenou de pintade</h3><span class="line"></span><span class="price">8 000 F</span></div><p>Mijoté lentement à l'étouffée avec légumes du marché.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Poisson braisé</h3><span class="line"></span><span class="price">7 500 F</span></div><p>Capitaine entier, sauce tomate pimentée, alloco.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Sauce graine</h3><span class="line"></span><span class="price">7 000 F</span></div><p>Noix de palme, viande de bœuf et riz blanc.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Foutou banane</h3><span class="line"></span><span class="price">6 000 F</span></div><p>Servi avec sauce claire au choix.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Assiette végétarienne</h3><span class="line"></span><span class="price">5 500 F</span></div><p>Légumes grillés, haricots et plantain rôti.</p></div>
+        </div>
+
+        <div class="panel" id="desserts" style="text-align:left">
+          <div class="dish"><div class="dish-head"><h3>Gâteau coco-gingembre</h3><span class="line"></span><span class="price">2 800 F</span></div><p>Moelleux, glaçage au citron vert.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Banane flambée</h3><span class="line"></span><span class="price">3 000 F</span></div><p>Flambée au rhum, glace vanille.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Mousse de mangue</h3><span class="line"></span><span class="price">2 500 F</span></div><p>Légère et fruitée, mangues de saison.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Fondant au cacao</h3><span class="line"></span><span class="price">3 200 F</span></div><p>Cacao 100 % ivoirien, cœur coulant.</p></div>
+        </div>
+
+        <div class="panel" id="boissons" style="text-align:left">
+          <div class="dish"><div class="dish-head"><h3>Bissap glacé</h3><span class="line"></span><span class="price">1 500 F</span></div><p>Fleurs d'hibiscus, menthe fraîche.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Gnamakoudji</h3><span class="line"></span><span class="price">1 500 F</span></div><p>Jus de gingembre, citron et ananas.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Jus de baobab</h3><span class="line"></span><span class="price">1 800 F</span></div><p>Onctueux et naturellement acidulé.</p></div>
+          <div class="dish"><div class="dish-head"><h3>Café de Côte d'Ivoire</h3><span class="line"></span><span class="price">1 000 F</span></div><p>Torréfié artisanalement.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== GALERIE ===== -->
+    <section class="section" id="galerie">
+      <div class="container center">
+        <span class="eyebrow">Galerie</span>
+        <h2>L'ambiance Aminata Rrestaurant</h2>
+        <div class="divider"></div>
+        <div class="gallery">
+          <div class="tile tile-1 reveal">🍗</div>
+          <div class="tile tile-2 reveal">🥗</div>
+          <div class="tile tile-3 reveal">🍌</div>
+          <div class="tile tile-4 reveal">🌴</div>
+          <div class="tile tile-5 reveal">🌶️</div>
+          <div class="tile tile-6 reveal">🍹</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AVIS ===== -->
+    <section class="section" id="avis" style="background: var(--cream-2)">
+      <div class="container center">
+        <span class="eyebrow">Témoignages</span>
+        <h2>Ils se sont régalés</h2>
+        <div class="divider"></div>
+        <div class="reviews" style="text-align:left">
+          <div class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>« Le meilleur poulet braisé de la ville, et un service aux petits soins. On revient chaque semaine ! »</p>
+            <strong>Aminata T.</strong>
+          </div>
+          <div class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>« Une cuisine authentique avec une vraie touche moderne. Le kedjenou est une merveille. »</p>
+            <strong>Jean-Marc B.</strong>
+          </div>
+          <div class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>« Cadre superbe, plats généreux et bissap divin. Parfait pour un repas en famille. »</p>
+            <strong>Fatou S.</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RÉSERVATION ===== -->
+    <section class="section section-dark" id="reservation">
+      <div class="container reserve">
+        <div class="reveal">
+          <span class="eyebrow" style="color: var(--gold)">Réservation</span>
+          <h2>Une table vous attend</h2>
+          <div class="divider"></div>
+          <p style="opacity:.8">Réservez en quelques clics, nous confirmons votre table rapidement.</p>
+          <ul class="hours">
+            <li><span>Lundi – Vendredi</span><span>11h30 – 22h30</span></li>
+            <li><span>Samedi</span><span>11h30 – 23h30</span></li>
+            <li><span>Dimanche</span><span>12h00 – 21h00</span></li>
+          </ul>
+          <div class="contact-lines">
+            <span>📍 Cocody, Abidjan — Côte d'Ivoire</span>
+            <span>📞 +225 07 49 56 55 32</span>
+            <span>✉️ Bonjour@Aminata Restaurant.ci</span>
+          </div>
+        </div>
+
+        <form class="form reveal" id="resaForm" novalidate>
+          <h3>Réserver une table</h3>
+          <div class="row">
+            <div class="field">
+              <label for="nom">Nom complet</label>
+              <input type="text" id="nom" placeholder="Votre nom" required />
+            </div>
+            <div class="field">
+              <label for="tel">Téléphone</label>
+              <input type="tel" id="tel" placeholder="+225 ..." required />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="date">Date</label>
+              <input type="date" id="date" required />
+            </div>
+            <div class="field">
+              <label for="heure">Heure</label>
+              <select id="heure" required>
+                <option value="">Choisir</option>
+                <option>12h00</option><option>13h00</option><option>14h00</option>
+                <option>19h00</option><option>20h00</option><option>21h00</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="pers">Nombre de personnes</label>
+            <select id="pers" required>
+              <option value="">Choisir</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7 et plus</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="note">Demande particulière (facultatif)</label>
+            <textarea id="note" rows="3" placeholder="Anniversaire, allergies…"></textarea>
+          </div>
+          <button type="submit" class="btn btn-full">Confirmer la réservation</button>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a href="#accueil" class="logo">Aminata Restaurant<span>.</span></a>
+      <p>© <span id="year"></span> Aminata Restaurant. Tous droits réservés.</p>
+      <div class="socials">
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+        <a href="#">TikTok</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    "use strict";
+
+    // ===== Header au scroll =====
+    const header = document.getElementById("header");
+    const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // ===== Menu mobile =====
+    const burger = document.getElementById("burger");
+    const menu = document.getElementById("menu");
+    const toggleMenu = (open) => {
+      burger.classList.toggle("open", open);
+      menu.classList.toggle("open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      document.body.style.overflow = open ? "hidden" : "";
+    };
+    burger.addEventListener("click", () => toggleMenu(!menu.classList.contains("open")));
+    menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => toggleMenu(false)));
+
+    // ===== Onglets de la carte =====
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".panel");
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        panels.forEach((p) => p.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    // ===== Apparition au scroll =====
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add("visible"), i * 90);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
+    // ===== Formulaire de réservation =====
+    const form = document.getElementById("resaForm");
+    const statusEl = document.getElementById("status");
+    const dateInput = document.getElementById("date");
+    dateInput.min = new Date().toISOString().split("T")[0];
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      let valid = true;
+
+      form.querySelectorAll("[required]").forEach((input) => {
+        const ok = input.value.trim() !== "";
+        input.closest(".field").classList.toggle("error", !ok);
+        if (!ok) valid = false;
+      });
+
+      statusEl.className = "status";
+      if (!valid) {
+        statusEl.textContent = "Merci de remplir tous les champs obligatoires.";
+        statusEl.classList.add("ko");
+        return;
+      }
+
+      const nom = document.getElementById("nom").value.trim();
+      // Ici, branchez un vrai envoi (WhatsApp, Formspree, EmailJS, back-end…)
+      statusEl.textContent = "Merci " + nom + " ! Votre demande est bien reçue, nous vous confirmons très vite.";
+      statusEl.classList.add("ok");
+      form.reset();
+    });
+
+    // ===== Année du footer =====
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
